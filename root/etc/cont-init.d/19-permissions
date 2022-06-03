@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv bash
+
+# permissions
+chown -R app:app \
+    /etc/sftpgo /srv/sftpgo
+chown app:app /var/lib/sftpgo
+chmod 700 /srv/sftpgo/backups

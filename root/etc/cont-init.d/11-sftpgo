@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv bash
+
+# copy default config files if they don't exist
+[[ ! -f /config/sftpgo/sftpgo.json ]] 
+    cp /defaults/sftpgo/sftpgo.json.sample /config/sftpgo/sftpgo.json
+
+
