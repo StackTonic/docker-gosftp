@@ -2,6 +2,6 @@
 
 # permissions
 chown -R app:app \
-    /etc/sftpgo /srv/sftpgo
+    /etc/sftpgo /srv/sftpgo /config/sftpgo
 chown app:app /var/lib/sftpgo
 chmod 700 /srv/sftpgo/backups
