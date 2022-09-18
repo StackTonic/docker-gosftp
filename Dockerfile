@@ -24,7 +24,7 @@ RUN set -xe && \
 
 
 
-FROM ghcr.io/stacktonic/alpine:v0.0.2
+FROM ghcr.io/stacktonic/alpine:v0.0.3
 
 # set up nsswitch.conf for Go's "netgo" implementation
 # https://github.com/gliderlabs/docker-alpine/issues/367#issuecomment-424546457
