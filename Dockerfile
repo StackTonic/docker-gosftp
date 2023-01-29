@@ -19,7 +19,7 @@ RUN go mod download
 # This ARG allows to disable some optional features and it might be useful if you build the image yourself.
 # For example you can disable S3 and GCS support like this:
 # --build-arg FEATURES=nos3,nogcs
-ARG FEATURES
+ARG FEATURES=nogcs,noazblob,nosqlite
 
 RUN set -xe && \
     export COMMIT_SHA=${COMMIT_SHA:-$(git describe --always --abbrev=8 --dirty)} && \
