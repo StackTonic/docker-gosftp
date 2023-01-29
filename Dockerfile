@@ -1,3 +1,6 @@
+ARG BASE_REPOSITORY_URL=harbor.stacktonic.com.au
+ARG BASE_IMAGE_NAME=stacktonic/alpine
+ARG BASE_IMAGE_TAG=latest
 ARG BUILDER_REPOSITORY_URL=registry.hub.docker.com
 ARG BUILDER_IMAGE_NAME=library/golang
 ARG BUILDER_IMAGE_TAG=1.19-alpine3.17
@@ -25,9 +28,7 @@ RUN set -xe && \
     export COMMIT_SHA=${COMMIT_SHA:-$(git describe --always --abbrev=8 --dirty)} && \
     go build $(if [ -n "${FEATURES}" ]; then echo "-tags ${FEATURES}"; fi) -trimpath -ldflags "-s -w -X github.com/drakkan/sftpgo/v2/internal/version.commit=${COMMIT_SHA} -X github.com/drakkan/sftpgo/v2/internal/version.date=`date -u +%FT%TZ`" -v -o sftpgo
 
-ARG BASE_REPOSITORY_URL=harbor.stacktonic.com.au
-ARG BASE_IMAGE_NAME=stacktonic/alpine
-ARG BASE_IMAGE_TAG=latest
+
 FROM ${BASE_REPOSITORY_URL}/${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 
 # set up nsswitch.conf for Go's "netgo" implementation
