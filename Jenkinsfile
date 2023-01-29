@@ -7,7 +7,7 @@ pipeline {
         
         string(name: 'BASE_DOCKER_REGISTRY_URL', defaultValue: 'harbor.stacktonic.com.au', description: 'Where should I get the BASE image?')
         string(name: 'BASE_IMAGE_NAME', defaultValue: 'stacktonic/alpine', description: 'What is the BASE image name?')
-        string(name: 'BASE_IMAGE_TAG', defaultValue: '3.16', description: 'Do we have a speical BASE image tag?')
+        string(name: 'BASE_IMAGE_TAG', defaultValue: 'latest', description: 'Do we have a speical BASE image tag?')
 
         string(name: 'DOCKER_REGISTRY_URL', defaultValue: 'harbor.stacktonic.com.au', description: 'How should I store the image?')
         string(name: 'IMAGE_NAME', defaultValue: 'stacktonic/sftpgo', description: 'How should I store the image?')
