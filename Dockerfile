@@ -35,7 +35,7 @@ RUN apk add --update --no-cache jq git rsync
 
 RUN mkdir -p /etc/sftpgo /var/lib/sftpgo /usr/share/sftpgo /srv/sftpgo/data /srv/sftpgo/backups
 
-COPY --from=builder /etc/ssh/moduli /etc/sftpgo/moduli
+# COPY --from=builder /etc/ssh/moduli /etc/sftpgo/moduli
 COPY --from=builder /workspace/templates /usr/share/sftpgo/templates
 COPY --from=builder /workspace/static /usr/share/sftpgo/static
 COPY --from=builder /workspace/openapi /usr/share/sftpgo/openapi
