@@ -1,0 +1,3 @@
+#!/usr/bin/with-contenv bash
+
+exec tail -f /var/log/sftpgo.log
