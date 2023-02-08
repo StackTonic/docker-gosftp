@@ -1,4 +1,10 @@
-FROM golang:1.18-alpine3.16 AS builder
+ARG BASE_REPOSITORY_URL=harbor.stacktonic.com.au
+ARG BASE_IMAGE_NAME=stacktonic/alpine
+ARG BASE_IMAGE_TAG=latest
+ARG BUILDER_REPOSITORY_URL=registry.hub.docker.com
+ARG BUILDER_IMAGE_NAME=library/golang
+ARG BUILDER_IMAGE_TAG=1.19-alpine3.17
+FROM ${BUILDER_REPOSITORY_URL}/${BUILDER_IMAGE_NAME}:${BUILDER_IMAGE_TAG} AS builder
 
 ENV GOFLAGS="-mod=readonly"
 
@@ -8,7 +14,7 @@ RUN git clone https://github.com/drakkan/sftpgo.git /workspace
 WORKDIR /workspace
 
 ARG GOPROXY
-ARG SFTPGO_VERSION=v2.2.3
+ARG SFTPGO_VERSION=v2.4.3
 
 RUN git checkout ${SFTPGO_VERSION}
 RUN go mod download
@@ -16,21 +22,20 @@ RUN go mod download
 # This ARG allows to disable some optional features and it might be useful if you build the image yourself.
 # For example you can disable S3 and GCS support like this:
 # --build-arg FEATURES=nos3,nogcs
-ARG FEATURES
+ARG FEATURES=nogcs,noazblob,nosqlite
 
 RUN set -xe && \
-    export COMMIT_SHA=$(git describe --always --dirty) && \
-    go build $(if [ -n "${FEATURES}" ]; then echo "-tags ${FEATURES}"; fi) -trimpath -ldflags "-s -w -X github.com/drakkan/sftpgo/v2/version.commit=${COMMIT_SHA} -X github.com/drakkan/sftpgo/v2/version.date=`date -u +%FT%TZ`" -v -o sftpgo
+    export COMMIT_SHA=${COMMIT_SHA:-$(git describe --always --abbrev=8 --dirty)} && \
+    go build $(if [ -n "${FEATURES}" ]; then echo "-tags ${FEATURES}"; fi) -trimpath -ldflags "-s -w -X github.com/drakkan/sftpgo/v2/internal/version.commit=${COMMIT_SHA} -X github.com/drakkan/sftpgo/v2/internal/version.date=`date -u +%FT%TZ`" -v -o sftpgo
 
 
+FROM ${BASE_REPOSITORY_URL}/${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 
-FROM ghcr.io/stacktonic/alpine:v0.0.2
-
-# set up nsswitch.conf for Go's "netgo" implementation
-# https://github.com/gliderlabs/docker-alpine/issues/367#issuecomment-424546457
-RUN test ! -e /etc/nsswitch.conf && echo 'hosts: files dns' > /etc/nsswitch.conf
+RUN apk add --update --no-cache jq git rsync
 
 RUN mkdir -p /etc/sftpgo /var/lib/sftpgo /usr/share/sftpgo /srv/sftpgo/data /srv/sftpgo/backups
+
+# COPY --from=builder /etc/ssh/moduli /etc/sftpgo/moduli
 COPY --from=builder /workspace/templates /usr/share/sftpgo/templates
 COPY --from=builder /workspace/static /usr/share/sftpgo/static
 COPY --from=builder /workspace/openapi /usr/share/sftpgo/openapi
